@@ -1,0 +1,20 @@
+{
+    "name": "richardhinkamp/bolt-picasa",
+    "description": "Bolt - Picasa extension",
+    "homepage": "https://github.com/richardhinkamp/bolt-picasa",
+    "license": "MIT",
+    "require": {
+        "bolt/bolt": "1.*",
+        "zend/gdata": "1.*"
+    },
+    "require-dev": {
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "BoltPicasa": "src/"
+        }
+    }
+
+}
+
