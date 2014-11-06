@@ -4,7 +4,7 @@
     "homepage": "https://github.com/richardhinkamp/bolt-picasa",
     "license": "MIT",
     "require": {
-        "bolt/bolt": "1.*",
+        "bolt/bolt": "1.*|dev-release/1.6",
         "zend/gdata": "1.*"
     },
     "require-dev": {
