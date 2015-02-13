@@ -20,17 +20,19 @@ class SyncPicasa extends BaseCommand
         $albumContentId = $this->app['config']->get('general/bolt_picasa/album_slug');
         $photoContentId = $this->app['config']->get('general/bolt_picasa/photo_slug');
 
-		$albums = $this->app['storage']->getContent($albumContentId);
-		$output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
+        $albums = $this->app['storage']->getContent($albumContentId, array('sync' => 1));
+        if (count($albums) > 0) {
+            $output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
+        }
         foreach($albums as $album)
         {
-			$output->writeln('Album: ' . $album->get('title'));
             /** @var \Bolt\Content $album */
+            $output->writeln('Album: ' . $album->get('title'));
             if (preg_match('/picasaweb\.google\.com\/([0-9]+)\/([A-Za-z0-9]+)/', $album->get('url'), $matches))
             {
                 $userId = $matches[1];
                 $albumName = $matches[2];
-				$output->writeln('User: ' . $userId . ' Album: ' . $albumName);
+                $output->writeln('User: ' . $userId . ' Album: ' . $albumName);
 
                 $query = new \Zend_Gdata_Photos_AlbumQuery();
                 $query->setUser($userId);
@@ -83,10 +85,10 @@ class SyncPicasa extends BaseCommand
                     echo "Error: " . $e->getMessage();
                 }
             }
-			else
-			{
-				$output->writeln("Invalid Picasa URL");
-			}
+            else
+            {
+                $output->writeln("Invalid Picasa URL");
+            }
             $album->values['sync'] = 0;
             $this->app['storage']->saveContent($album);
         }
