@@ -41,6 +41,9 @@ class SyncPicasa extends BaseCommand
                 $query->setKind('photo');
                 $query->setImgMax( 1600 );
                 $query->setThumbsize('144c'); // does not work for icon
+                if (preg_match('/authkey=([A-Za-z0-9]+)/', $album->get('url'), $m)) {
+                    $query->setParam('authkey', $m[1]);
+                }
 
                 $service = new \Zend_Gdata_Photos();
 
