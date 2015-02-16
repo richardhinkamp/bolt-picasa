@@ -28,7 +28,7 @@ class SyncPicasa extends BaseCommand
         {
             /** @var \Bolt\Content $album */
             $output->writeln('Album: ' . $album->get('title'));
-            if (preg_match('/picasaweb\.google\.com\/([0-9]+)\/([A-Za-z0-9]+)/', $album->get('url'), $matches))
+            if (preg_match('/picasaweb\.google\.com\/([A-Za-z0-9\.]+)\/([A-Za-z0-9]+)/', $album->get('url'), $matches))
             {
                 $userId = $matches[1];
                 $albumName = $matches[2];
@@ -41,7 +41,7 @@ class SyncPicasa extends BaseCommand
                 $query->setKind('photo');
                 $query->setImgMax( 1600 );
                 $query->setThumbsize('144c'); // does not work for icon
-                if (preg_match('/authkey=([A-Za-z0-9]+)/', $album->get('url'), $m)) {
+                if (preg_match('/authkey=([A-Za-z0-9\-\_]+)/', $album->get('url'), $m)) {
                     $query->setParam('authkey', $m[1]);
                 }
 
