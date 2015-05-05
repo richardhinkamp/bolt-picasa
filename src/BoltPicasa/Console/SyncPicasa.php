@@ -20,7 +20,8 @@ class SyncPicasa extends BaseCommand
         $albumContentId = $this->app['config']->get('general/bolt_picasa/album_slug');
         $photoContentId = $this->app['config']->get('general/bolt_picasa/photo_slug');
 
-		$albums = $this->app['storage']->getContent($albumContentId, '', $p = array(), array('status' => 'draft', 'sync' => true));
+		$p = array();
+        $albums = $this->app['storage']->getContent($albumContentId, '', $p, array('status' => 'draft', 'sync' => true));
         if (count($albums) > 0) {
             $output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
         }
