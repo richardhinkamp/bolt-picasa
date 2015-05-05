@@ -21,16 +21,18 @@ class SyncPicasa extends BaseCommand
         $photoContentId = $this->app['config']->get('general/bolt_picasa/photo_slug');
 
 		$albums = $this->app['storage']->getContent($albumContentId, '', $p = array(), array('status' => 'draft', 'sync' => true));
-		$output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
+        if (count($albums) > 0) {
+            $output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
+        }
         foreach($albums as $album)
         {
-			$output->writeln('Album: ' . $album->get('title'));
             /** @var \Bolt\Content $album */
-            if (preg_match('/picasaweb\.google\.com\/([0-9]+)\/([A-Za-z0-9]+)/', $album->get('url'), $matches))
+            $output->writeln('Album: ' . $album->get('title'));
+            if (preg_match('/picasaweb\.google\.com\/([A-Za-z0-9\.]+)\/([A-Za-z0-9]+)/', $album->get('url'), $matches))
             {
                 $userId = $matches[1];
                 $albumName = $matches[2];
-				$output->writeln('User: ' . $userId . ' Album: ' . $albumName);
+                $output->writeln('User: ' . $userId . ' Album: ' . $albumName);
 
                 $query = new \Zend_Gdata_Photos_AlbumQuery();
                 $query->setUser($userId);
@@ -39,6 +41,9 @@ class SyncPicasa extends BaseCommand
                 $query->setKind('photo');
                 $query->setImgMax( 1600 );
                 $query->setThumbsize('144c'); // does not work for icon
+                if (preg_match('/authkey=([A-Za-z0-9\-\_]+)/', $album->get('url'), $m)) {
+                    $query->setParam('authkey', $m[1]);
+                }
 
                 $service = new \Zend_Gdata_Photos();
 
@@ -83,10 +88,10 @@ class SyncPicasa extends BaseCommand
                     echo "Error: " . $e->getMessage();
                 }
             }
-			else
-			{
-				$output->writeln("Invalid Picasa URL");
-			}
+            else
+            {
+                $output->writeln("Invalid Picasa URL");
+            }
             $album->values['sync'] = 0;
             $this->app['storage']->saveContent($album);
         }
