@@ -6,6 +6,9 @@ use Bolt\Nut\BaseCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+// Zend has hardcoded requires expecting it to be in the path...
+set_include_path(get_include_path() . PATH_SEPARATOR . __DIR__ . '/../../../../../zend/gdata/library/');
+
 class SyncPicasa extends BaseCommand
 {
     protected function configure()
@@ -20,7 +23,7 @@ class SyncPicasa extends BaseCommand
         $albumContentId = $this->app['config']->get('general/bolt_picasa/album_slug');
         $photoContentId = $this->app['config']->get('general/bolt_picasa/photo_slug');
 
-		$p = array();
+        $p = array();
         $albums = $this->app['storage']->getContent($albumContentId, '', $p, array('status' => 'draft', 'sync' => true));
         if (count($albums) > 0) {
             $output->writeln('To sync ' . count($albums) . ' albums from content id ' . $albumContentId);
@@ -53,7 +56,7 @@ class SyncPicasa extends BaseCommand
                     $feed = $service->getAlbumFeed($query);
                     $album->values['thumb_url'] = $feed->getIcon()->getText();
                     $album->values['title'] = $feed->getTitleValue();
-                    $album->values['slug'] = makeSlug($feed->getTitleValue());
+                    $album->values['slug'] = $this->app['slugify']->slugify($feed->getTitleValue());
                     $album->values['status'] = 'published';
                     $ut = round(((float)$feed->getGphotoTimestamp()->getText() / 1000.0 ), 0 );
                     $album->values['datepublish'] = date("Y-m-d H:i:s", $ut);
